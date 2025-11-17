@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA Meta tagy -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Geodet">
+    <meta name="theme-color" content="#16a34a">
+    <meta name="description" content="Moje úkoly - Geodet">
+    
+    <title>Moje úkoly - Geodet</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1vamUgw7prb2x5IC0gR2VvZGV0IiwKICAic2hvcnRfbmFtZSI6ICJHZW9kZXQiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmZmZmZmYiLAogICJ0aGVtZV9jb2xvciI6ICIjMTZhMzRhIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInIHZpZXdCb3g9JzAgMCAxOTIgMTkyJyUzRSUzQ3JlY3Qgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInIGZpbGw9JyUyMzE2YTM0YScgcng9JzI0Jy8lM0UlM0N0ZXh0IHg9JzIwJyB5PScxMjAnIGZvbnQtc2l6ZT0nNzAnIGZpbGw9JyUyM2ZmZmZmZicgZm9udC1mYW1pbHk9J0FyaWFsJyUzRSVGMCU5RiU5MSVCNyUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsCiAgICAgICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1MTInIGhlaWdodD0nNTEyJyB2aWV3Qm94PScwIDAgNTEyIDUxMiclM0UlM0NyZWN0IHdpZHRoPSc1MTInIGhlaWdodD0nNTEyJyBmaWxsPSclMjMxNmEzNGEnIHJ4PSc2NCcvJTNFJTNDdGV4dCB4PSc1MCcgeT0nMzIwJyBmb250LXNpemU9JzIwMCcgZmlsbD0nJTIzZmZmZmZmJyBmb250LWZhbWlseT0nQXJpYWwnJTNFJUYwJTlGJTkxJUI3JTNDJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0KfQ==">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior: none;
+        }
+        input, textarea, select {
+            -webkit-user-select: text;
+            user-select: text;
+            font-size: 16px;
+        }
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.7));
+            color: white;
+            padding: 16px;
+            display: none;
+            z-index: 9999;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-green-100">
+    <!-- PWA Instalační výzva -->
+    <div id="installPrompt" class="install-prompt">
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex-1">
+                <p class="font-bold text-sm">📱 Nainstalovat aplikaci</p>
+                <p class="text-xs opacity-90">Přidat na plochu pro rychlý přístup</p>
+            </div>
+            <button 
+                onclick="installApp()"
+                class="px-4 py-2 bg-green-600 rounded-lg font-bold text-sm whitespace-nowrap"
+            >
+                Instalovat
+            </button>
+            <button 
+                onclick="closeInstallPrompt()"
+                class="px-3 py-2 text-white/70 text-xl"
+            >
+                ✕
+            </button>
+        </div>
+    </div>
+
+    <div id="root"></div>
+    
+    <script type="module">
+        // Konfigurace
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxMcVSWoZgeFU_jE2RUp_INEhZeAOo_T6qAZywQHUg3TTZ71acgvM9CjGQy4eAnXDTLPQ/exec';
+        const EMAIL_CONFIG = {
+            serviceId: 'service_suouxkq',
+            templateId: 'template_nu4phlc',
+            publicKey: 'CJWpbTlUQfegnb7AK'
+        };
+
+        emailjs.init(EMAIL_CONFIG.publicKey);
+
+        const geodeti = [
+            'Dalibor Straka', 'Tomáš Horáček', 'Petr Kočiš',
+            'Alexandra Pinkovska', 'Matej Kovac', 'Roland Klimt', 'Martin Morvay'
+        ];
+
+        let state = {
+            selectedGeodet: localStorage.getItem('geodetName') || '',
+            requests: [],
+            loading: false,
+            activeRequest: null,
+            confirmForm: {
+                typZamereni: '',
+                poznamkaGeodeta: '',
+                soubory: [] // Pole souborů: [{data, fileName, mimeType}, ...]
+            }
+        };
+
+        // PWA Install prompt
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(() => {
+                document.getElementById('installPrompt').style.display = 'block';
+            }, 3000);
+        });
+
+        window.installApp = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`Instalace: ${outcome}`);
+                deferredPrompt = null;
+            }
+            closeInstallPrompt();
+        };
+
+        window.closeInstallPrompt = () => {
+            document.getElementById('installPrompt').style.display = 'none';
+        };
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA byla nainstalována');
+            closeInstallPrompt();
+        });
+
+        function getDriveFileUrl(fileId) {
+            if (!fileId) return null;
+            return `https://drive.google.com/file/d/${fileId}/view`;
+        }
+
+        async function loadMyRequests() {
+            if (!state.selectedGeodet) return;
+            
+            state.loading = true;
+            render();
+            
+            try {
+                const response = await fetch(`${API_URL}?action=getAll`);
+                const data = await response.json();
+                state.requests = data.filter(r => 
+                    r.pridelenyGeodet === state.selectedGeodet && r.stav === 'Přiřazeno'
+                );
+            } catch (error) {
+                console.error('Chyba:', error);
+                alert('❌ Nepodařilo se načíst úkoly');
+            }
+            
+            state.loading = false;
+            render();
+        }
+
+        function selectGeodet(geodet) {
+            state.selectedGeodet = geodet;
+            localStorage.setItem('geodetName', geodet);
+            loadMyRequests();
+        }
+
+        function handleImageUpload(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            
+            // Uložit aktuální hodnoty z formuláře PŘED renderem
+            const typZamereniEl = document.getElementById('typZamereni');
+            const poznamkaEl = document.getElementById('poznamka');
+            
+            if (typZamereniEl) {
+                state.confirmForm.typZamereni = typZamereniEl.value;
+            }
+            if (poznamkaEl) {
+                state.confirmForm.poznamkaGeodeta = poznamkaEl.value;
+            }
+            
+            // Načíst všechny soubory
+            let loadedCount = 0;
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    state.confirmForm.soubory.push({
+                        data: reader.result,
+                        fileName: file.name,
+                        mimeType: file.type
+                    });
+                    loadedCount++;
+                    
+                    // Render až když jsou všechny soubory načtené
+                    if (loadedCount === files.length) {
+                        render();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function uploadFileToDrive(fileData, fileName, mimeType, objektCislo) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'uploadFile',
+                        fileData: fileData,
+                        fileName: fileName,
+                        mimeType: mimeType,
+                        objektCislo: objektCislo // Přidat číslo objektu
+                    })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    return result.fileId;
+                } else {
+                    console.error('Chyba při nahrávání:', result.error);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Chyba:', error);
+                return null;
+            }
+        }
+
+        async function confirmDateClick(requestId) {
+            const request = state.requests.find(r => r.id == requestId);
+            if (!request) return;
+
+            if (!confirm(`Potvrdit termín příjezdu ${request.pozadovaneDatum} v ${request.pozadovanyCas}?`)) {
+                return;
+            }
+
+            try {
+                // Aktualizovat stav v Google Sheets
+                const params = new URLSearchParams({
+                    action: 'update',
+                    id: requestId,
+                    potvrzenoGeodet: 'Ano'
+                });
+
+                const response = await fetch(`${API_URL}?${params}`);
+                await response.json();
+
+                // Poslat email stavbyvedoucímu
+                await emailjs.send(
+                    EMAIL_CONFIG.serviceId,
+                    'template_8nwdg6g', // Musíš vytvořit nový template v EmailJS
+                    {
+                        to_email: request.email,
+                        to_name: request.jmeno,
+                        geodet_jmeno: state.selectedGeodet,
+                        objekt_cislo: request.objektCislo,
+                        pozadovane_datum: request.pozadovaneDatum,
+                        pozadovany_cas: request.pozadovanyCas,
+                        poznamka: request.poznamka
+                    }
+                );
+
+                alert('✅ Termín byl potvrzen a email odeslán stavbyvedoucímu!');
+                
+                // Obnovit data
+                await loadMyRequests();
+                state.activeRequest = state.requests.find(r => r.id == requestId);
+                render();
+            } catch (error) {
+                console.error('Chyba při potvrzování termínu:', error);
+                alert('❌ Nepodařilo se potvrdit termín. Zkuste to znovu.');
+            }
+        }
+
+        async function confirmSurvey(request) {
+            if (!state.confirmForm.typZamereni || !state.confirmForm.poznamkaGeodeta || state.confirmForm.soubory.length === 0) {
+                alert('❌ Prosím vyplňte všechna pole a přidejte alespoň jeden soubor');
+                return;
+            }
+
+            const confirmBtn = document.getElementById('confirmBtn');
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Odesílám...';
+            }
+
+            try {
+                // Nahrát všechny soubory na Drive
+                confirmBtn.textContent = `Nahrávám soubory (0/${state.confirmForm.soubory.length})...`;
+                const fileIds = [];
+                
+                for (let i = 0; i < state.confirmForm.soubory.length; i++) {
+                    const soubor = state.confirmForm.soubory[i];
+                    confirmBtn.textContent = `Nahrávám soubory (${i + 1}/${state.confirmForm.soubory.length})...`;
+                    
+                    const fileId = await uploadFileToDrive(
+                        soubor.data,
+                        soubor.fileName,
+                        soubor.mimeType
+                    );
+
+                    if (fileId) {
+                        fileIds.push(fileId);
+                    }
+                }
+                
+                if (fileIds.length === 0) {
+                    alert('❌ Nepodařilo se nahrát žádný soubor');
+                    if (confirmBtn) {
+                        confirmBtn.disabled = false;
+                        confirmBtn.textContent = '✓ Potvrdit dokončení';
+                    }
+                    return;
+                }
+
+                const datum = new Date().toLocaleString('cs-CZ');
+                
+                // Uložit více ID souborů jako CSV string
+                const params = new URLSearchParams({
+                    action: 'update',
+                    id: request.id,
+                    stav: 'Dokončeno',
+                    typZamereni: state.confirmForm.typZamereni,
+                    poznamkaGeodeta: state.confirmForm.poznamkaGeodeta,
+                    datumDokonceni: datum,
+                    fotkaFileId: fileIds.join(',') // CSV string s ID
+                });
+
+                const response = await fetch(`${API_URL}?${params}`);
+                await response.json();
+
+                await emailjs.send(
+                    EMAIL_CONFIG.serviceId,
+                    EMAIL_CONFIG.templateId,
+                    {
+                        to_email: request.email,
+                        to_name: request.jmeno,
+                        objekt_cislo: request.objektCislo,
+                        poznamka_pozadavku: request.poznamka,
+                        datum_pozadavku: request.datumPozadavku,
+                        geodet_jmeno: state.selectedGeodet,
+                        poznamka_geodeta: state.confirmForm.poznamkaGeodeta,
+                        typ_zamereni: state.confirmForm.typZamereni,
+                        datum_dokonceni: datum,
+                        pocet_souboru: fileIds.length
+                    }
+                );
+
+                alert(`✅ Zaměření bylo úspěšně potvrzeno! (${fileIds.length} souborů nahráno)`);
+                
+                state.activeRequest = null;
+                state.confirmForm = {
+                    typZamereni: '',
+                    poznamkaGeodeta: '',
+                    soubory: []
+                };
+                
+                await loadMyRequests();
+            } catch (error) {
+                console.error('Chyba:', error);
+                alert('❌ Nepodařilo se potvrdit zaměření');
+            } finally {
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '✓ Potvrdit dokončení';
+                }
+            }
+        }
+
+        function render() {
+            const root = document.getElementById('root');
+
+            if (!state.selectedGeodet) {
+                root.innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+                            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+                                👷 Vyberte geodeta
+                            </h1>
+                            <div class="space-y-3">
+                                ${geodeti.map(g => `
+                                    <button 
+                                        onclick="selectGeodetClick('${g}')"
+                                        class="w-full px-6 py-4 bg-green-50 hover:bg-green-100 text-green-800 rounded-xl font-semibold text-lg transition-colors border-2 border-green-200"
+                                    >
+                                        ${g}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                window.selectGeodetClick = selectGeodet;
+                return;
+            }
+
+            if (state.activeRequest) {
+                const req = state.activeRequest;
+                root.innerHTML = `
+                    <div class="min-h-screen p-4 pb-8">
+                        <div class="max-w-2xl mx-auto">
+                            <button 
+                                onclick="backClick()"
+                                class="mb-4 px-4 py-2 bg-white rounded-lg shadow text-gray-700 font-semibold"
+                            >
+                                ← Zpět na seznam
+                            </button>
+
+                            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                                    ${req.objektCislo}
+                                </h2>
+                                <div class="space-y-2 text-sm">
+                                    <p><strong>Zadal:</strong> ${req.jmeno}</p>
+                                    <p><strong>Email:</strong> ${req.email}</p>
+                                    <p><strong>Datum požadavku:</strong> ${req.datumPozadavku}</p>
+                                    
+                                    ${req.pozadovaneDatum && req.pozadovanyCas ? `
+                                        <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                                            <p class="font-bold text-blue-800 mb-2">📅 Požadované datum a čas příjezdu:</p>
+                                            <p class="text-blue-700">
+                                                <strong>Datum:</strong> ${req.pozadovaneDatum}<br>
+                                                <strong>Čas:</strong> ${req.pozadovanyCas}
+                                            </p>
+                                            ${req.potvrzenoGeodet === 'Ano' ? `
+                                                <div class="mt-3 p-3 bg-green-100 rounded-lg border-2 border-green-300">
+                                                    <p class="text-green-800 font-bold">✓ Termín potvrzen</p>
+                                                </div>
+                                            ` : `
+                                                <div class="mt-3">
+                                                    <button
+                                                        onclick="confirmDateClick('${req.id}')"
+                                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all"
+                                                    >
+                                                        ✓ Potvrdit termín příjezdu
+                                                    </button>
+                                                </div>
+                                            `}
+                                        </div>
+                                    ` : ''}
+                                    
+                                    <p class="pt-2"><strong>Co zaměřit:</strong></p>
+                                    <p class="text-gray-700">${req.poznamka}</p>
+                                    
+                                    ${req.prilohaFileId ? `
+                                        <div class="pt-3">
+                                            <a 
+                                                href="${getDriveFileUrl(req.prilohaFileId)}" 
+                                                target="_blank"
+                                                class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold"
+                                            >
+                                                📎 Zobrazit přílohu ze stavby
+                                            </a>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-2xl shadow-lg p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                                    ✅ Potvrdit dokončení
+                                </h3>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Typ zaměření *
+                                        </label>
+                                        <select 
+                                            id="typZamereni"
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 text-base"
+                                        >
+                                            <option value="">-- Vyberte typ --</option>
+                                            <option value="Stavba" ${state.confirmForm.typZamereni === 'Stavba' ? 'selected' : ''}>Stavba</option>
+                                            <option value="DSPS" ${state.confirmForm.typZamereni === 'DSPS' ? 'selected' : ''}>DSPS</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Poznámka - co bylo zaměřeno *
+                                        </label>
+                                        <textarea 
+                                            id="poznamka"
+                                            rows="4"
+                                            placeholder="Popište detailně, co jste zaměřili..."
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 text-base"
+                                        >${state.confirmForm.poznamkaGeodeta}</textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            📎 Soubory ze zaměření * (můžete vybrat více)
+                                        </label>
+                                        <input 
+                                            type="file"
+                                            id="fileInput"
+                                            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                                            multiple
+                                            onchange="imageUploadClick(event)"
+                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 text-base"
+                                        />
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            Fotky, PDF, Word, Excel, TXT... (můžete vybrat více souborů najednou)
+                                        </p>
+                                        ${state.confirmForm.soubory.length > 0 ? `
+                                            <div class="mt-3 space-y-2">
+                                                <p class="text-sm text-green-700 font-semibold">
+                                                    ✓ Nahráno souborů: ${state.confirmForm.soubory.length}
+                                                </p>
+                                                ${state.confirmForm.soubory.map((soubor, index) => `
+                                                    <div class="p-3 bg-green-50 rounded-lg">
+                                                        ${soubor.data.startsWith('data:image') ? `
+                                                            <div class="flex items-start gap-3 mb-2">
+                                                                <img 
+                                                                    src="${soubor.data}" 
+                                                                    class="w-24 h-24 object-cover rounded border-2 border-green-200"
+                                                                />
+                                                                <div class="flex-1">
+                                                                    <p class="font-semibold text-gray-800 text-sm">${soubor.fileName}</p>
+                                                                    <p class="text-xs text-gray-500">Obrázek</p>
+                                                                    <button
+                                                                        onclick="removeSouborClick(${index})"
+                                                                        class="mt-1 text-xs text-red-600 hover:text-red-800 underline"
+                                                                    >
+                                                                        Odstranit
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        ` : `
+                                                            <div class="flex items-center gap-3">
+                                                                <span class="text-3xl">📄</span>
+                                                                <div class="flex-1">
+                                                                    <p class="font-semibold text-gray-800 text-sm">${soubor.fileName}</p>
+                                                                    <p class="text-xs text-gray-500">Dokument</p>
+                                                                </div>
+                                                                <button
+                                                                    onclick="removeSouborClick(${index})"
+                                                                    class="text-xs text-red-600 hover:text-red-800 underline"
+                                                                >
+                                                                    Odstranit
+                                                                </button>
+                                                            </div>
+                                                        `}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+
+                                    <button 
+                                        id="confirmBtn"
+                                        onclick="confirmClick()"
+                                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl text-lg shadow-lg transition-all transform active:scale-95"
+                                    >
+                                        ✓ Potvrdit dokončení
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                window.backClick = () => {
+                    state.activeRequest = null;
+                    state.confirmForm = { typZamereni: '', poznamkaGeodeta: '', soubory: [] };
+                    render();
+                };
+                
+                window.confirmDateClick = confirmDateClick;
+                window.imageUploadClick = handleImageUpload;
+                
+                // Event listenery pro průběžné ukládání hodnot
+                const typZamereniEl = document.getElementById('typZamereni');
+                const poznamkaEl = document.getElementById('poznamka');
+                
+                if (typZamereniEl) {
+                    typZamereniEl.onchange = (e) => {
+                        state.confirmForm.typZamereni = e.target.value;
+                    };
+                }
+                
+                if (poznamkaEl) {
+                    poznamkaEl.oninput = (e) => {
+                        state.confirmForm.poznamkaGeodeta = e.target.value;
+                    };
+                }
+                
+                window.removeSouborClick = (index) => {
+                    // Uložit aktuální hodnoty před odstraněním souboru
+                    state.confirmForm.typZamereni = document.getElementById('typZamereni').value;
+                    state.confirmForm.poznamkaGeodeta = document.getElementById('poznamka').value;
+                    
+                    // Odstranit konkrétní soubor
+                    state.confirmForm.soubory.splice(index, 1);
+                    
+                    // Reset file inputu pokud nejsou žádné soubory
+                    if (state.confirmForm.soubory.length === 0) {
+                        const fileInput = document.getElementById('fileInput');
+                        if (fileInput) {
+                            fileInput.value = '';
+                        }
+                    }
+                    
+                    render();
+                };
+                
+                window.confirmClick = () => {
+                    state.confirmForm.typZamereni = document.getElementById('typZamereni').value;
+                    state.confirmForm.poznamkaGeodeta = document.getElementById('poznamka').value;
+                    confirmSurvey(req);
+                };
+                
+                return;
+            }
+
+            root.innerHTML = `
+                <div class="min-h-screen p-4 pb-8">
+                    <div class="max-w-2xl mx-auto">
+                        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-800 mb-1">
+                                        📋 Moje úkoly
+                                    </h1>
+                                    <p class="text-sm text-gray-600">
+                                        ${state.selectedGeodet}
+                                    </p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button 
+                                        onclick="refreshClick()"
+                                        class="px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold"
+                                    >
+                                        🔄
+                                    </button>
+                                    <button 
+                                        onclick="changeGeodetClick()"
+                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold"
+                                    >
+                                        Změnit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 rounded-xl p-4 mb-6 border-l-4 border-green-500">
+                            <p class="text-sm text-green-700 font-semibold">Aktivní úkoly</p>
+                            <p class="text-3xl font-bold text-green-800">${state.requests.length}</p>
+                        </div>
+
+                        ${state.loading ? `
+                            <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+                                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
+                                <p class="mt-4 text-gray-600">Načítám úkoly...</p>
+                            </div>
+                        ` : state.requests.length === 0 ? `
+                            <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+                                <p class="text-gray-600 text-lg">🎉 Žádné nové úkoly!</p>
+                            </div>
+                        ` : `
+                            <div class="space-y-4">
+                                ${state.requests.map(req => `
+                                    <div class="bg-white rounded-2xl shadow-lg p-5">
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3">
+                                            ${req.objektCislo}
+                                        </h3>
+                                        <p class="text-sm text-gray-600 mb-2">
+                                            <strong>Zadal:</strong> ${req.jmeno}
+                                        </p>
+                                        <p class="text-sm text-gray-600 mb-3">
+                                            <strong>Datum požadavku:</strong> ${req.datumPozadavku}
+                                        </p>
+                                        <p class="text-gray-700 mb-4">
+                                            ${req.poznamka}
+                                        </p>
+                                        <button 
+                                            onclick="openRequestClick('${req.id}')"
+                                            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-all"
+                                        >
+                                            ✓ Potvrdit zaměření
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            window.refreshClick = loadMyRequests;
+            window.changeGeodetClick = () => {
+                state.selectedGeodet = '';
+                localStorage.removeItem('geodetName');
+                render();
+            };
+            window.openRequestClick = (id) => {
+                state.activeRequest = state.requests.find(r => r.id == id);
+                render();
+            };
+        }
+
+        render();
+        if (state.selectedGeodet) {
+            loadMyRequests();
+        }
+    </script>
+</body>
+</html>
